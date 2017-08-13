@@ -2,22 +2,6 @@ document.body.style.border = "5px solid blue";
 
 var middleWasDown = false;
 
-// function goToNextTab(currentTabInfo) {
-//     console.log("in goto next");
-//     console.log("Current tab info is ", currentTabInfo);
-
-//     browser.windows.getCurrent({populate: true}).then((windowInfoObj) => {
-//         console.log("Window info obj is ", windowInfoObj);
-        
-//         var currentTabIndex = currentTabInfo.index;
-//         console.log("Go to next tab. Current index is ", currentTabIndex);
-//     });
-// }
-
-// function goToPreviousTab(currentTabInfo) {
-//     console.log("Go to previous tab.");
-// }
-
 function sendNextTabMessage() {
     console.log("Sending message.");
     browser.runtime.sendMessage({"tabTarget": "next"});
@@ -28,34 +12,33 @@ function sendPreviousTabMessage() {
     browser.runtime.sendMessage({"tabTarget": "previous"});
 }
 
+function disableClicks(event) {
+    event.preventDefault();
+}
+
 document.addEventListener("mousedown", function (event) {
     console.log("Mouse down event! Event is: ");
     console.log(event);
 
     event = event || window.event;
 
-    console.log("Middle status is currently: ");
     console.log(middleWasDown);
 
-    console.log("Browser is", browser);
-    console.log("tabs is ", browser.tabs);
-
-    // browser.tabs.getCurrent().then(onGot, onError).catch(function(error) {
-    //     console.log ("aaaaah");
-    //     console.error(error);
-    // });
-
     console.log("welp")
+
+    if (middleWasDown == true) {
+        // event.stopPropagation();
+        // event.stopImmediatePropagation();
+        // event.cancelBubble();
+        // event.preventDefault();
+    }
 
     switch (event.which) {
         case 1:
             console.log('left');
             if (middleWasDown == true) {
-                // var gettingCurrent = browser.tabs.getCurrent();
-                // console.log("What even");
-                // gettingCurrent.then(goToPreviousTab, onError);
-                // getCurrentTabPromise.then(goToPreviousTab);
                 console.log("calling background");
+                event.stopPropagation();
                 sendPreviousTabMessage();
             }
             
@@ -69,6 +52,11 @@ document.addEventListener("mousedown", function (event) {
             console.log("In middle. Before: ");
             console.log(middleWasDown);
             middleWasDown = true;
+
+            // Prevent context menu and click events from going through while tabbing.
+            // document.addEventListener("click", event => disableClicks(event), true);
+            event.stopPropagation();
+
             console.log("In middle. After: ");
             console.log(middleWasDown);
             break;
@@ -77,6 +65,7 @@ document.addEventListener("mousedown", function (event) {
             if (middleWasDown == true) {
                 console.log("Promise time.");
                 sendNextTabMessage();
+                event.stopPropagation();
             }
             break;
     }
@@ -88,6 +77,10 @@ document.addEventListener("mouseup", function (event) {
 
     event = event || window.event;
 
+    if (middleWasDown == true) {
+        event.stopImmediatePropagation();
+    }
+
     switch (event.which) {
         case 1:
             console.log("left up.");
@@ -95,9 +88,23 @@ document.addEventListener("mouseup", function (event) {
         case 2:
             console.log("middle up.");
             middleWasDown = false;
+            // Re-enable context menu and click events.
+            // document.removeEventListener("click", event => disableClicks(event), true);
             break;
         case 3:
             console.log("right up");
             break;
+    }
+});
+
+document.addEventListener("click", function (event) {
+    if (middleWasDown == true) {
+        event.stopImmediatePropagation();
+    }
+});
+
+document.addEventListener("contextmenu", function (event) {
+    if (middleWasDown == true) {
+        event.stopImmediatePropagation();
     }
 });

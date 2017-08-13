@@ -1,6 +1,6 @@
 document.body.style.border = "5px solid blue";
 
-var middleWasDown = new Boolean(false);
+var middleWasDown = false;
 
 function goToNextTab() {
     console.log("Go to next tab.");
@@ -16,25 +16,32 @@ document.addEventListener("mousedown", function (event) {
 
     event = event || window.event;
 
+    console.log("Middle status is currently: ");
+    console.log(middleWasDown);
+
     switch (event.which) {
         case 1:
             console.log('left');
-            if (middleWasDown === true) {
+            if (middleWasDown == true) {
                 goToPreviousTab();
             }
             
             break;
         case 2:
             console.log('middle');
-            if (middleWasDown === true) {
+            if (middleWasDown == true) {
                 console.log("weird...");
             }
 
-            middleWasDown = new Boolean(true);
+            console.log("In middle. Before: ");
+            console.log(middleWasDown);
+            middleWasDown = true;
+            console.log("In middle. After: ");
+            console.log(middleWasDown);
             break;
         case 3:
             console.log('right');
-            if (middleWasDown === true) {
+            if (middleWasDown == true) {
                 goToNextTab();
             }
             break;
@@ -53,7 +60,7 @@ document.addEventListener("mouseup", function (event) {
             break;
         case 2:
             console.log("middle up.");
-            middleWasDown = new Boolean(false);
+            middleWasDown = false;
             break;
         case 3:
             console.log("right up");

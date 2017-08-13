@@ -11,8 +11,27 @@
 
     "content_scripts": [
         {
-            "matches": ["*://*.mozilla.org/*"],
+            "matches": ["<all_urls>"],
             "js": ["rocker-tab.js"]
         }
+    ],
+
+    "background": {
+        "scripts": [
+            "rocker-background.js"
+        ]
+    },
+
+    "applications": {
+        "gecko": {
+            "id": "rocker@example.com"
+        }
+    },
+
+    "permissions": [
+        "webRequest",
+        "tabs",
+        "<all_urls>",
+        "activeTab"
     ]
 }

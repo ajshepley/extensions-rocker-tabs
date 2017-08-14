@@ -1,8 +1,12 @@
-// console.log = function() {}
+// rocker-tab.js
+
+// disable console for upload.
+console.log = function() {}
 
 browser.runtime.onMessage.addListener(handleGlobalBoolUpdate);
 
-document.body.style.border = "5px solid blue";
+// Used for checking load times.
+// document.body.style.border = "5px solid blue";
 
 var middleWasDown = false;
 requestCurrentBoolUpdate();

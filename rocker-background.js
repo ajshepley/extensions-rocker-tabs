@@ -1,6 +1,7 @@
 // rocker-background.js
 
-// console.log = function() {}
+// disable console for upload.
+console.log = function() {}
 
 browser.runtime.onMessage.addListener(notify);
 browser.runtime.onMessage.addListener(setGlobalBool);

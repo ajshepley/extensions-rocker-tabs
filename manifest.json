@@ -6,7 +6,7 @@
     "description": "Adds middle-click based Rocker gestures for prevtab and nexttab.",
 
     "icons": {
-        "48": "icons/border-48.png"
+        "48": "icons/rocker-icon-48.png"
     },
 
     "content_scripts": [
@@ -26,12 +26,5 @@
         "gecko": {
             "id": "rocker@example.com"
         }
-    },
-
-    "permissions": [
-        "webRequest",
-        "tabs",
-        "<all_urls>",
-        "activeTab"
-    ]
+    }
 }

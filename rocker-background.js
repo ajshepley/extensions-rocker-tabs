@@ -1,16 +1,56 @@
 // rocker-background.js
 
+// console.log = function() {}
+
 browser.runtime.onMessage.addListener(notify);
 browser.runtime.onMessage.addListener(setGlobalBool);
+browser.runtime.onMessage.addListener(boolUpdateRequesHandler);
 
 var globalBackgroundMiddleSet = false;
 
-function notify(message) {
+function setGlobalBool(message) {
+
+    var messageType = message.messageType;
+
+    switch (messageType) {
+        case "globalBoolUpdate":
+            globalBackgroundMiddleSet = message.newGlobalBool;
+            break;
+        default:
+            console.log("Unknown message type in setGlobalBool.", messageType);
+    }
+    
     // Set the global bool here.
+
+    sendUpdatedBoolToContentScripts();
+}
+
+function boolUpdateRequesHandler(message) {
+    // Send bool status to content scripts
+    switch(message.messageType) {
+        case "requestGlobalBool":
+        sendUpdatedBoolToContentScripts();
+            break;
+        default:
+            console.log("Unknown message type in request global bool.", message.messageType);
+    }
+    
+}
+
+function sendUpdatedBoolToContentScripts() {
+    console.log("Sending updated bool to tabs. Value: ", globalBackgroundMiddleSet);
+    browser.tabs.query({windowId: browser.windows.WINDOW_ID_CURRENT})
+    .then(tabs => {
+        for (var i = 0, len = tabs.length; i < len; i++) {
+            console.log("Sending new bool to tab ", tabs[i].index, " ", i);
+            browser.tabs.sendMessage(tabs[i].id, {"messageType": "boolUpdate",
+            "newBoolValue": globalBackgroundMiddleSet});
+        }
+    });
 }
 
 function notify(message) {
-    console.log("Notified. Message ", message);
+    console.log("Notified of global bool to store. Message ", message);
     var currentTabTarget = message.tabTarget;
 
     if (currentTabTarget !== undefined && typeof(currentTabTarget) === "string") {
